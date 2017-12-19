@@ -90,9 +90,14 @@ function match(url, routes) {
 }
 
 function root(url, routes) {
-  var matched = routes.map(
-    route => route.route === '' || route.route === '*' ? url : url.split(new RegExp(route.route + '($|\/)'))[0]
-  );
+  var matched = routes.map(function (route) {
+    var regExp = new RegExp(route.route
+      .replace(Navigo.PARAMETER_REGEXP, Navigo.REPLACE_VARIABLE_REGEXP)
+      .replace(Navigo.WILDCARD_REGEXP, Navigo.REPLACE_WILDCARD) + '($|\/)');
+
+      return route.route === '' || route.route === '*' ? url : url.split(regExp)[0];
+  });
+  
   var fallbackURL = clean(url);
 
   if (matched.length > 1) {
